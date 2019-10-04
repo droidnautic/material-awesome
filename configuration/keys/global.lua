@@ -1,6 +1,7 @@
 local awful = require('awful')
 require('awful.autofocus')
 local beautiful = require('beautiful')
+local xrandr = require('xrandr')
 local hotkeys_popup = require('awful.hotkeys_popup').widget
 
 local modkey = require('configuration.keys.mod').modKey
@@ -11,11 +12,54 @@ local globalKeys =
   awful.util.table.join(
   -- Hotkeys
   awful.key({modkey}, 'F1', hotkeys_popup.show_help, {description = 'show help', group = 'awesome'}),
+  awful.key(
+    {modkey},
+    'z',
+    function()
+      awful.spawn(apps.default.lock)
+    end,
+    {description = 'Lock Screen', group = 'awesome'}
+  ),
+  -- Displays
+  awful.key({modkey}, 'r', function() xrandr.xrandr() end, {description = 'swap monitor configuration', group = 'displays'}),
+  --awful.key({modkey}, 'r', function() awful.client.focus. end, {description = 'swap monitor configuration', group = 'displays'}),
   -- Tag browsing
   awful.key({modkey}, 'w', awful.tag.viewprev, {description = 'view previous', group = 'tag'}),
   awful.key({modkey}, 's', awful.tag.viewnext, {description = 'view next', group = 'tag'}),
   awful.key({modkey}, 'Escape', awful.tag.history.restore, {description = 'go back', group = 'tag'}),
   -- Default client focus
+  awful.key(
+    {modkey},
+    'h',
+    function()
+      awful.client.focus.global_bydirection('left')
+    end,
+    {description = 'move focus left', group = 'client'}
+  ),
+  awful.key(
+    {modkey},
+    'j',
+    function()
+      awful.client.focus.global_bydirection('down')
+    end,
+    {description = 'move focus down', group = 'client'}
+  ),
+  awful.key(
+    {modkey},
+    'k',
+    function()
+      awful.client.focus.global_bydirection('up')
+    end,
+    {description = 'move focus up', group = 'client'}
+  ),
+  awful.key(
+    {modkey},
+    'l',
+    function()
+      awful.client.focus.global_bydirection('right')
+    end,
+    {description = 'move focus right', group = 'client'}
+  ),
   awful.key(
     {modkey},
     'd',
@@ -53,13 +97,7 @@ local globalKeys =
     {description = 'go back', group = 'client'}
   ),
   -- Programms
-  awful.key(
-    {modkey},
-    'l',
-    function()
-      awful.spawn(apps.default.lock)
-    end
-  ),
+
   awful.key(
     {},
     'Print',
@@ -143,6 +181,18 @@ local globalKeys =
     {description = 'select previous', group = 'layout'}
   ),
   awful.key(
+    {modkey, 'Shift'},
+    'q',
+    function()
+      local c = _G.client.focus
+      -- Focus restored client
+      if c then
+        c:kill()
+      end
+    end,
+    {description = 'close focused client', group = 'client'}
+  ),
+  awful.key(
     {modkey, 'Control'},
     'n',
     function()
@@ -160,7 +210,14 @@ local globalKeys =
     {modkey},
     '`',
     function()
-      _G.toggle_quake()
+      awful.spawn(
+        awful.screen.focused().selected_tag.defaultApp,
+        {
+          tag = _G.mouse.screen.selected_tag,
+          placement = awful.placement.bottom_right
+        }
+      )
+      --_G.toggle_quake()
     end,
     {description = 'dropdown application', group = 'launcher'}
   ),
@@ -258,12 +315,14 @@ local globalKeys =
 -- This should map on the top row of your keyboard, usually 1 to 9.
 for i = 1, 9 do
   -- Hack to only show tags 1 and 9 in the shortcut window (mod+s)
-  local descr_view, descr_toggle, descr_move, descr_toggle_focus
+  local descr_view, descr_toggle, descr_move, descr_toggle_focus, descr_move_screen
   if i == 1 or i == 9 then
     descr_view = {description = 'view tag #', group = 'tag'}
+    descr_move_screen = {description = 'move focused client to screen #', group = 'displays'}
     descr_toggle = {description = 'toggle tag #', group = 'tag'}
     descr_move = {description = 'move focused client to tag #', group = 'tag'}
     descr_toggle_focus = {description = 'toggle focused client on tag #', group = 'tag'}
+
   end
   globalKeys =
     awful.util.table.join(
@@ -307,6 +366,17 @@ for i = 1, 9 do
         end
       end,
       descr_move
+    ),
+    -- Move client to screen.
+    awful.key(
+      {modkey, altkey},
+      '#' .. i + 9,
+      function()
+        if _G.client.focus then
+          _G.client.focus:move_to_screen(i)
+        end
+      end,
+      descr_move_screen
     ),
     -- Toggle tag on focused client.
     awful.key(

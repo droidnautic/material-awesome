@@ -21,7 +21,7 @@ local dpi = require('beautiful').xresources.apply_dpi
 
 local HOME = os.getenv('HOME')
 local PATH_TO_ICONS = HOME .. '/.config/awesome/widget/wifi/icons/'
-local interface = 'wlp2s0'
+local interface = 'wlp3s0'
 local connected = false
 local essid = 'N/A'
 
@@ -43,7 +43,7 @@ widget_button:buttons(
       1,
       nil,
       function()
-        awful.spawn('wicd-client -n')
+        awful.spawn('nm-applet')
       end
     )
   )

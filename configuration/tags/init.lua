@@ -6,31 +6,37 @@ local tags = {
   {
     icon = icons.chrome,
     type = 'chrome',
-    defaultApp = 'google-chrome-beta',
+    defaultApp = 'brave',
     screen = 1
   },
   {
     icon = icons.code,
     type = 'code',
-    defaultApp = 'code',
+    defaultApp = 'atom',
     screen = 1
   },
   {
     icon = icons.social,
     type = 'social',
-    defaultApp = 'station',
+    defaultApp = 'teams-for-linux',
     screen = 1
   },
   {
     icon = icons.folder,
     type = 'files',
-    defaultApp = 'nautilus',
+    defaultApp = 'thunar',
     screen = 1
   },
   {
     icon = icons.music,
     type = 'music',
-    defaultApp = 'youtube-music',
+    defaultApp = 'mpd',
+    screen = 1
+  },
+  {
+    icon = icons.video,
+    type = 'video',
+    defaultApp = 'mpv ~/Videos/`ls -Art ~/Videos | tail -n -1`',
     screen = 1
   },
   {
